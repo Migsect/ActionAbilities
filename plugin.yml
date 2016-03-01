@@ -1,0 +1,6 @@
+name: ActionAbilities
+main: net.samongi.ActionAbilities.ActionAbilities
+version: 0.0
+description: Ability Framework
+author: Migsect
+depend: [SamongiLib]

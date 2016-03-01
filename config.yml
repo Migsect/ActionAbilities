@@ -1,0 +1,6 @@
+logger:
+  active_channels: MAIN COST ABILITY EFFECT 
+  always_show: false
+  always_show_info: true
+  always_show_error: true
+  always_show_debug: true
