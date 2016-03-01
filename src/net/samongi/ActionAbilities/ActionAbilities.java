@@ -13,6 +13,7 @@ import net.samongi.ActionAbilities.Cost.Types.HungerCost;
 import net.samongi.ActionAbilities.Cost.Types.LevelCost;
 import net.samongi.ActionAbilities.Cost.Types.LifeCost;
 import net.samongi.ActionAbilities.Effect.EffectManager;
+import net.samongi.ActionAbilities.Player.PlayerManager;
 import net.samongi.SamongiLib.Configuration.ConfigFile;
 import net.samongi.SamongiLib.Logger.SamLogger;
 
@@ -29,6 +30,7 @@ public class ActionAbilities extends JavaPlugin
   private CostManager cost_manager;
   private EffectManager effect_manager;
   private AbilityManager ability_manager;
+  private PlayerManager player_manager;
 
   @Override public void onLoad()
   {
@@ -105,4 +107,9 @@ public class ActionAbilities extends JavaPlugin
    * @return
    */
   public AbilityManager getAbilityManager(){return this.ability_manager;}
+  /**Returns the player manager
+   * 
+   * @return
+   */
+  public PlayerManager getPlayerManager(){return this.player_manager;}
 }

@@ -2,6 +2,7 @@ package net.samongi.ActionAbilities.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.UUID;
 
 import net.samongi.ActionAbilities.Ability.Ability;
@@ -24,11 +25,17 @@ public class PlayerData
 	//  -1 = slot is not linked to an ability
 	//  >0 = remaining charges
 	private int[] charges = new int[PlayerData.SLOTS]; // 0 - 9 are the inventory slots
-	private List<BukkitRunnable> tasks = new ArrayList<>();
+	
+	// Stores all the cooldown tasks.  First list is indexing for each slot
+	// The second list is a psuedo-queue
+	private List<List<BukkitRunnable>> tasks = new ArrayList<List<BukkitRunnable>>();
 	
 	public PlayerData(UUID player)
 	{
 		this.player = player;
+		
+		// Setting up the arraylists in the task matrix
+		for(int i = 0; i < SLOTS; i++) tasks.add(new ArrayList<BukkitRunnable>());
 	}
 	/**Gets the UUID of this player data
 	 * this UUID refers to a player
@@ -73,6 +80,24 @@ public class PlayerData
 		this.charges[slot] = ability.getCharges();
 	}
 	
+	/**Checks to see if the slot has a charge
+	 * 
+	 * @param slot
+	 * @return True if there is at least one charge
+	 */
+	public boolean hasCharge(int slot){return this.charges[slot] > 0;}
+	
+	/**Adds a charge to the slot
+	 * 
+	 * @param slot
+	 */
+	public void addCharge(int slot){this.charges[slot]++;}
+	/**Removes a charge from the slot
+	 * 
+	 * @param slot
+	 */
+	public void removeCharge(int slot){this.charges[slot]--;}
+	
 	/**Activates a cooldown on the specified slot
 	 * This will lock down the slot 
 	 * 
@@ -81,6 +106,22 @@ public class PlayerData
 	 */
 	public void startCooldown(int slot, double time)
 	{
+		// Getting the ticks that this cooldown will take
 		int ticks = PlayerData.secondsToTicks(time);
+		
+		// Creating the task
+		CooldownTask task = new CooldownTask(this.player, slot, ticks);
+		// Adding the task to the list
+		this.tasks.get(slot).add(task);
+		// Activating the cooldown
+		task.activate();
+		
+	}
+	
+	public boolean isFrontCooldown(int slot, BukkitRunnable task)
+	{
+		List<BukkitRunnable> slot_tasks = this.tasks.get(slot);
+		if(slot_tasks.get(0) == null) return false;
+		return slot_tasks.get(0).equals(task);
 	}
 }
