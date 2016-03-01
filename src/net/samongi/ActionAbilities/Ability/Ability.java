@@ -18,6 +18,9 @@ import net.samongi.SamongiLib.Utilities.TextUtil;
  */
 public class Ability
 {
+	public static final String COOLDOWN_IDENTIFIER = "cooldown";
+	public static final String CHARGES_IDENTIFIER = "charges";
+	
   private final String key;
   
   private List<Effect> effects = new ArrayList<>();

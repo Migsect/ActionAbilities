@@ -24,6 +24,8 @@ public class ActionAbilities extends JavaPlugin
   private static SamLogger logger;
   public static SamLogger logger(){return ActionAbilities.logger;}
   
+  public static final String ITEM_IDENTIFIER = "ability";
+  
   private CostManager cost_manager;
   private EffectManager effect_manager;
   private AbilityManager ability_manager;
