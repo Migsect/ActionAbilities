@@ -20,4 +20,23 @@ public class PlayerManager
 	 * @return
 	 */
 	public boolean exists(UUID player){return this.player_data.containsKey(player);}
+	
+	/**Creates a new player data for the player and adds it to the manager
+	 * 
+	 * @param player
+	 */
+	public void register(UUID player)
+	{
+	  PlayerData data = new PlayerData(player);
+	  this.player_data.put(player, data);
+	}
+	/**Removes the player data from the manager
+	 * 
+	 * @param player
+	 */
+	public void deregister(UUID player)
+	{
+	  this.player_data.get(player).clear();
+	  this.player_data.remove(player);
+	}
 }

@@ -3,7 +3,10 @@ package net.samongi.ActionAbilities;
 import java.io.File;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.samongi.ActionAbilities.Ability.AbilityManager;
@@ -13,6 +16,7 @@ import net.samongi.ActionAbilities.Cost.Types.HungerCost;
 import net.samongi.ActionAbilities.Cost.Types.LevelCost;
 import net.samongi.ActionAbilities.Cost.Types.LifeCost;
 import net.samongi.ActionAbilities.Effect.EffectManager;
+import net.samongi.ActionAbilities.Listeners.PlayerListener;
 import net.samongi.ActionAbilities.Player.PlayerManager;
 import net.samongi.SamongiLib.Configuration.ConfigFile;
 import net.samongi.SamongiLib.Logger.SamLogger;
@@ -64,6 +68,10 @@ public class ActionAbilities extends JavaPlugin
     // Creating the ability manager
     this.ability_manager = new AbilityManager();
     ActionAbilities.logger().debug("MAIN", "Created Ability Manager");
+    
+    // Creating the player manager
+    this.player_manager = new PlayerManager();
+    ActionAbilities.logger().debug("MAIN", "Created Player Manager");
   }
   @Override public void onEnable()
   {
@@ -86,10 +94,17 @@ public class ActionAbilities extends JavaPlugin
       if(section == null) continue;
       this.ability_manager.parseConfiguration(section);
     }
+    
+    PluginManager pm = this.getServer().getPluginManager();
+    pm.registerEvents(new PlayerListener(), this);
+    
+    // Re-registering players
+    for(Player p : Bukkit.getOnlinePlayers()) this.player_manager.register(p.getUniqueId());
   }
   @Override public void onDisable()
   {
-    
+    // De-registering players
+    for(Player p : Bukkit.getOnlinePlayers()) this.player_manager.deregister(p.getUniqueId());
   }
   
   /**Returns the cost manager

@@ -2,15 +2,13 @@ package net.samongi.ActionAbilities.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.UUID;
 
-import net.samongi.ActionAbilities.Ability.Ability;
 import net.samongi.ActionAbilities.Ability.AbilityInstance;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerData
 {
@@ -20,6 +18,8 @@ public class PlayerData
 	
 	private final UUID player;
 	
+	private ChargeUpdaterTask charge_updater;
+	
 	// stores charges
 	//  0 = no charges and the item should display this
 	//  -1 = slot is not linked to an ability
@@ -28,15 +28,20 @@ public class PlayerData
 	
 	// Stores all the cooldown tasks.  First list is indexing for each slot
 	// The second list is a psuedo-queue
-	private List<List<BukkitRunnable>> tasks = new ArrayList<List<BukkitRunnable>>();
+	private List<List<CooldownTask>> tasks = new ArrayList<List<CooldownTask>>();
 	
 	public PlayerData(UUID player)
 	{
 		this.player = player;
 		
-		// Setting up the arraylists in the task matrix
-		for(int i = 0; i < SLOTS; i++) tasks.add(new ArrayList<BukkitRunnable>());
+		for(int i = 0; i < SLOTS; i++) this.charges[i] = -1;
+		for(int i = 0; i < SLOTS; i++) tasks.add(new ArrayList<CooldownTask>());
+		
+		// Running the updater
+		this.charge_updater = new ChargeUpdaterTask(this);
+		this.charge_updater.activate();
 	}
+	
 	/**Gets the UUID of this player data
 	 * this UUID refers to a player
 	 * 
@@ -70,15 +75,39 @@ public class PlayerData
 	 */
 	public AbilityInstance getAbility(int slot){return AbilityInstance.parseItemStack(this.getPlayer().getInventory().getItem(slot));}
 	
+	/**Reloads all charges on this player data
+	 * For slots
+	 */
+	public void reloadCharges()
+	{
+	  for(int i = 0 ; i < PlayerData.SLOTS ; i++) this.reloadCharge(i);
+	}
 	/**Will reload the charges for the slot based on the ability inside the slot
 	 * 
 	 * @param slot
 	 */
-	public void reloadCharges(int slot)
+	public void reloadCharge(int slot)
 	{
 		AbilityInstance ability = this.getAbility(slot);
 		this.charges[slot] = ability.getCharges();
 	}
+	public void updateCharges()
+	{
+    for(int i = 0 ; i < PlayerData.SLOTS ; i++) this.updateCharge(i);
+	}
+	public void updateCharge(int slot)
+	{
+	  Player player = this.getPlayer();
+	  ItemStack item = player.getInventory().getItem(slot);
+	  if(item == null) return;
+	  
+	  AbilityInstance ability_instance = AbilityInstance.parseItemStack(item);
+	  if(ability_instance == null) this.charges[slot] = -1;
+	  else if(this.tasks.get(slot).size() == 0 && this.charges[slot] <= 0) this.charges[slot] = ability_instance.getCharges();
+
+    if(this.charges[slot] > 0) item.setAmount(this.charges[slot]);
+	}
+	public int getCharges(int slot){return this.charges[slot];}
 	
 	/**Checks to see if the slot has a charge
 	 * 
@@ -110,18 +139,45 @@ public class PlayerData
 		int ticks = PlayerData.secondsToTicks(time);
 		
 		// Creating the task
-		CooldownTask task = new CooldownTask(this.player, slot, ticks);
+		CooldownTask task = new CooldownTask(this, slot, ticks);
 		// Adding the task to the list
 		this.tasks.get(slot).add(task);
 		// Activating the cooldown
-		task.activate();
-		
+		task.activate();	
 	}
 	
-	public boolean isFrontCooldown(int slot, BukkitRunnable task)
+	/**Checks to see if the task is the front cooldown for the specified slot
+	 * A front cooldown usually means it is the oldest cooldown.
+	 * 
+	 * @param slot The slot to check
+	 * @param task The task to check to see if it a front cooldown 
+	 * @return
+	 */
+	public boolean isFrontCooldown(int slot, CooldownTask task)
 	{
-		List<BukkitRunnable> slot_tasks = this.tasks.get(slot);
+		List<CooldownTask> slot_tasks = this.tasks.get(slot);
 		if(slot_tasks.get(0) == null) return false;
 		return slot_tasks.get(0).equals(task);
+	}
+	
+	public void removeCooldown(int slot, CooldownTask task)
+	{
+	  if(!this.tasks.get(slot).contains(task)) return;
+	  this.tasks.get(slot).remove(task);
+	}
+	
+	/**Clears the player data
+	 * This will remove all cooldowns and reset charges
+	 */
+	public void clear()
+	{
+	  for(List<CooldownTask> cool_downs : this.tasks) for(CooldownTask task : cool_downs) task.run();
+	  this.reloadCharges();
+	}
+	
+	public boolean isLocked(int slot)
+	{
+	  if(this.tasks.get(slot).size() > 0) return true;
+	  return false;
 	}
 }

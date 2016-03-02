@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -43,6 +44,25 @@ public class AbilityInstance
 	 * @return
 	 */
 	public Cost[] getCosts(){return this.costs.toArray(new Cost[this.costs.size()]);}
+	
+	/**Checks to see if the player has the neccessary payment for the costs
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean hasCosts(Player player)
+	{
+	  for(Cost c : this.getCosts()) if(!c.has(player)) return false;
+	  return true;
+	}
+	/**Removes all the costs of this ability instance from the player
+	 * 
+	 * @param player
+	 */
+	public void takeCosts(Player player)
+	{
+	  for(Cost c : this.getCosts()) c.take(player);
+	}
 	
 	public AbilityInstance(Ability ability, int charges, double cooldown, List<Cost> costs)
 	{
