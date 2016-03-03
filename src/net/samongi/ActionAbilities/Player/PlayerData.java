@@ -104,6 +104,8 @@ public class PlayerData
 	  AbilityInstance ability_instance = AbilityInstance.parseItemStack(item);
 	  if(ability_instance == null) this.charges[slot] = -1;
 	  else if(this.tasks.get(slot).size() == 0 && this.charges[slot] <= 0) this.charges[slot] = ability_instance.getCharges();
+	  // Placing a maximum on the number of charges that can be displayed
+    if(ability_instance != null && this.charges[slot] > ability_instance.getCharges()) this.charges[slot] = ability_instance.getCharges();
 
     if(this.charges[slot] > 0) item.setAmount(this.charges[slot]);
 	}
@@ -175,6 +177,13 @@ public class PlayerData
 	  this.reloadCharges();
 	}
 	
+	/**Checks to see if the slot is locked
+	 * A slot is locked if it has any active cooldowns
+	 * Locked slots are meant to not be dropped or moved.
+	 * 
+	 * @param slot The slot to check if it is locked
+	 * @return True if the slot is locked
+	 */
 	public boolean isLocked(int slot)
 	{
 	  if(this.tasks.get(slot).size() > 0) return true;

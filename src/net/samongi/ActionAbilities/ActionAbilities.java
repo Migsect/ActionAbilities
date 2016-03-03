@@ -1,7 +1,6 @@
 package net.samongi.ActionAbilities;
 
 import java.io.File;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,6 +15,7 @@ import net.samongi.ActionAbilities.Cost.Types.HungerCost;
 import net.samongi.ActionAbilities.Cost.Types.LevelCost;
 import net.samongi.ActionAbilities.Cost.Types.LifeCost;
 import net.samongi.ActionAbilities.Effect.EffectManager;
+import net.samongi.ActionAbilities.Effect.types.StepEffect;
 import net.samongi.ActionAbilities.Listeners.PlayerListener;
 import net.samongi.ActionAbilities.Player.PlayerManager;
 import net.samongi.SamongiLib.Configuration.ConfigFile;
@@ -48,7 +48,7 @@ public class ActionAbilities extends JavaPlugin
     
     ActionAbilities.instance = this; // setting up the static instance of this class
     
-    ActionAbilities.logger = new SamLogger(Logger.getLogger("Minecraft")); // Setting up the logger
+    ActionAbilities.logger = new SamLogger(this.getLogger()); // Setting up the logger
     ActionAbilities.logger.parseConfiguration(this.getConfig().getConfigurationSection("logger")); // parsing the logger configuration
     
     // Creating cost manager
@@ -63,6 +63,7 @@ public class ActionAbilities extends JavaPlugin
     // Creating the effect manager
     this.effect_manager = new EffectManager();
     ActionAbilities.logger().debug("MAIN", "Created Effect Manager");
+    this.effect_manager.addEffectConstructor(new StepEffect.Constructor());
     // registering the effect constructors
     
     // Creating the ability manager
@@ -73,6 +74,8 @@ public class ActionAbilities extends JavaPlugin
     this.player_manager = new PlayerManager();
     ActionAbilities.logger().debug("MAIN", "Created Player Manager");
   }
+  
+  
   @Override public void onEnable()
   {
     // Getting the ability file
@@ -101,6 +104,8 @@ public class ActionAbilities extends JavaPlugin
     // Re-registering players
     for(Player p : Bukkit.getOnlinePlayers()) this.player_manager.register(p.getUniqueId());
   }
+  
+  
   @Override public void onDisable()
   {
     // De-registering players

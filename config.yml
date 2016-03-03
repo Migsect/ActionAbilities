@@ -4,3 +4,6 @@ logger:
   always_show_info: true
   always_show_error: true
   always_show_debug: true
+cooldown_sounds:
+  cooldown_finished: LEVEL_UP
+  on_cooldown: ANVIL_LAND 

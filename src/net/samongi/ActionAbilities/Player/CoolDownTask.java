@@ -2,13 +2,22 @@ package net.samongi.ActionAbilities.Player;
 
 import net.samongi.ActionAbilities.ActionAbilities;
 
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class CooldownTask extends BukkitRunnable
 {
-	private static final int UPDATE_TICKS = 4;
+	private static final int UPDATE_TICKS = 2;
 	
 	private static long milliToTick(long time){return (long) Math.floor(20 * time / 1000.0);}
+	
+	public static void completeSound(Player player)
+	{
+	  String sound_string = ActionAbilities.instance().getConfig().getString("cooldown_sounds.cooldown_finished", "LEVEL_UP");
+    Sound sound = Sound.valueOf(sound_string);
+    if(sound != null) player.getWorld().playSound(player.getLocation(), sound, 1.0F, 1.0F);
+	}
 	
 	private final PlayerData player_data;
 	private final int slot;
@@ -46,9 +55,9 @@ public class CooldownTask extends BukkitRunnable
 	public void activate()
 	{
 		this.started_time = CooldownTask.milliToTick(System.currentTimeMillis());
-		ActionAbilities.logger().info("COOLDOWN", "Started Milli: " + System.currentTimeMillis() + " ; Started Tick: " + this.started_time);
+		ActionAbilities.logger().debug("COOLDOWN", "Started Milli: " + System.currentTimeMillis() + " ; Started Tick: " + this.started_time);
 
-    ActionAbilities.logger().info("COOLDOWN", "  Started Cooldown Update Task.");
+    ActionAbilities.logger().debug("COOLDOWN", "  Started Cooldown Update Task.");
 		this.update_task.activate();
 		this.runTaskLater(ActionAbilities.instance(), this.ticks);
 	}
@@ -86,6 +95,12 @@ public class CooldownTask extends BukkitRunnable
 	 */
 	public long getRemainingTicks(){return this.getTotalTicks() - this.getElapsedTicks();}
 	
+	/**Sets the update task for this cooldown
+	 * This is generally used by the update task itself when it
+	 * is refreshing itself.
+	 * 
+	 * @param task
+	 */
 	public void setUpdateTask(CooldownUpdateTask task){this.update_task = task;}
 	
 	@Override
@@ -102,6 +117,8 @@ public class CooldownTask extends BukkitRunnable
     this.player_data.addCharge(this.slot); // data update
     this.player_data.updateCharge(slot); // visual update
     this.player_data.removeCooldown(slot, this);
+    
+    CooldownTask.completeSound(this.player_data.getPlayer());
 	}
 
 }

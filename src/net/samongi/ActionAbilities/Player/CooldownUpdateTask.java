@@ -38,8 +38,8 @@ public class CooldownUpdateTask extends BukkitRunnable
 			int stack_size = (int) Math.ceil(CooldownUpdateTask.MAX_STACK * completion);
 			item.setAmount(stack_size);
 			
-      ActionAbilities.logger().info("COOLDOWN-UPDATER", "Completion: " + completion + " ; Stack Size: " + stack_size);
-      ActionAbilities.logger().info("COOLDOWN-UPDATER", "  Remaining-ticks: " + remaining_ticks + " ; Elapsed-ticks: " + this.task.getElapsedTicks());
+      ActionAbilities.logger().debug("COOLDOWN-UPDATER", "Completion: " + completion + " ; Stack Size: " + stack_size);
+      ActionAbilities.logger().debug("COOLDOWN-UPDATER", "  Remaining-ticks: " + remaining_ticks + " ; Elapsed-ticks: " + this.task.getElapsedTicks());
 		}
 		
 		// Checking to make sure we should continue running new tasks

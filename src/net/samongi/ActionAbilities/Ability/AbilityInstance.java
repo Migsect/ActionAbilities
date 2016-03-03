@@ -81,7 +81,9 @@ public class AbilityInstance
 	 */
 	public static AbilityInstance parseItemStack(ItemStack item)
 	{
+	  if(item == null) return null;
 		ItemMeta im = item.getItemMeta();
+		if(im == null) return null;
 		
 		List<String> lore = im.getLore();
 		if(lore == null) return null;

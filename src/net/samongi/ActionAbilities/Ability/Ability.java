@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -20,6 +21,18 @@ public class Ability
 {
 	public static final String COOLDOWN_IDENTIFIER = "cooldown";
 	public static final String CHARGES_IDENTIFIER = "charges";
+	
+	/**Plays a configured sound to the player when they fail to activate
+	 * an ability.
+	 * 
+	 * @param player
+	 */
+	public static void failedActivationSound(Player player)
+	{
+	  String sound_string = ActionAbilities.instance().getConfig().getString("cooldown_sounds.on_cooldown", "ANVIL_LAND");
+    Sound sound = Sound.valueOf(sound_string);
+    if(sound != null) player.getWorld().playSound(player.getLocation(), sound, 1.0F, 1.0F);
+	}
 	
   private final String key;
   
@@ -162,6 +175,18 @@ public class Ability
   {
     if(!this.hasCosts(player)) return;
     for(Cost c : this.costs) c.take(player);
+  }
+  
+  public boolean canActivate(Player player)
+  {
+    for(Effect e : this.effects) if(!e.isPossible(player)) return false;
+    for(String a : this.abilities)
+    {
+      Ability ability = ActionAbilities.instance().getAbilityManager().getAbility(a);
+      if(ability == null) continue;
+      if(!ability.canActivate(player)) return false;
+    }
+    return true;
   }
   
   /**Activates the ability
