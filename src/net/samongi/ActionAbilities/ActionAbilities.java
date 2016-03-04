@@ -15,6 +15,11 @@ import net.samongi.ActionAbilities.Cost.Types.HungerCost;
 import net.samongi.ActionAbilities.Cost.Types.LevelCost;
 import net.samongi.ActionAbilities.Cost.Types.LifeCost;
 import net.samongi.ActionAbilities.Effect.EffectManager;
+import net.samongi.ActionAbilities.Effect.types.DanceEffect;
+import net.samongi.ActionAbilities.Effect.types.GripEffect;
+import net.samongi.ActionAbilities.Effect.types.LeapEffect;
+import net.samongi.ActionAbilities.Effect.types.PotionApplyEffect;
+import net.samongi.ActionAbilities.Effect.types.PotionAreaEffect;
 import net.samongi.ActionAbilities.Effect.types.StepEffect;
 import net.samongi.ActionAbilities.Listeners.PlayerListener;
 import net.samongi.ActionAbilities.Player.PlayerManager;
@@ -64,6 +69,11 @@ public class ActionAbilities extends JavaPlugin
     this.effect_manager = new EffectManager();
     ActionAbilities.logger().debug("MAIN", "Created Effect Manager");
     this.effect_manager.addEffectConstructor(new StepEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new GripEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new DanceEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new LeapEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new PotionAreaEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new PotionApplyEffect.Constructor());
     // registering the effect constructors
     
     // Creating the ability manager

@@ -89,6 +89,7 @@ public class PlayerData
 	public void reloadCharge(int slot)
 	{
 		AbilityInstance ability = this.getAbility(slot);
+		if(ability == null) return;
 		this.charges[slot] = ability.getCharges();
 	}
 	public void updateCharges()
@@ -98,12 +99,13 @@ public class PlayerData
 	public void updateCharge(int slot)
 	{
 	  Player player = this.getPlayer();
+	  if(player == null) return;
 	  ItemStack item = player.getInventory().getItem(slot);
 	  if(item == null) return;
 	  
 	  AbilityInstance ability_instance = AbilityInstance.parseItemStack(item);
-	  if(ability_instance == null) this.charges[slot] = -1;
-	  else if(this.tasks.get(slot).size() == 0 && this.charges[slot] <= 0) this.charges[slot] = ability_instance.getCharges();
+	  if(ability_instance == null) this.charges[slot] = -1; 
+	  else if(this.tasks.get(slot).size() == 0 && this.charges[slot] < 0) this.charges[slot] = ability_instance.getCharges();
 	  // Placing a maximum on the number of charges that can be displayed
     if(ability_instance != null && this.charges[slot] > ability_instance.getCharges()) this.charges[slot] = ability_instance.getCharges();
 

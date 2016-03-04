@@ -70,10 +70,10 @@ public class PlayerListener implements Listener
 		{
   		// Charge math
   		data.removeCharge(slot); // logical update
-  		data.updateCharge(slot); // visual update
   		// starting the cooldown
   		ActionAbilities.logger().info("COOLDOWN", "Started Cooldown with time: " + ability_instance.getCooldown());
   		data.startCooldown(slot, ability_instance.getCooldown());
+      data.updateCharge(slot); // visual update
 		}
 		
 		// Activating the ability
