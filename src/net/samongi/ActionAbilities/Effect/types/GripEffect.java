@@ -8,6 +8,7 @@ import net.samongi.SamongiLib.Utilities.TextUtil;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -20,6 +21,8 @@ public class GripEffect implements Effect
   private static final double DEFAULT_MAX_DISTANCE = 50.0;
   private static final double DEFAULT_FRONT_DISTANCE = 1.0;
   private static final String DEFAULT_TELEPORT_SOUND = "ENDERMAN_TELEPORT";
+  
+  private static final int CHECK_BELOW = 23;
   
   public static class Constructor implements EffectConstructor
   {
@@ -73,6 +76,13 @@ public class GripEffect implements Effect
     
     // Tests to ensure you can actually go there.
     if(step_h_loc.getBlock().getType().isSolid()) return;
+    boolean has_bottom = false;
+    for(int i = 0; i < CHECK_BELOW; i++)if(step_h_loc.getBlock().getRelative(BlockFace.DOWN, i).isEmpty())
+    {
+      has_bottom = true;
+      break;
+    }
+    if(!has_bottom) return;
     
     Sound teleport_sound = Sound.valueOf(this.teleport_sound);
     if(teleport_sound != null) entity.getWorld().playSound(player.getLocation(), teleport_sound, 1.0F, 1.0F);
@@ -89,7 +99,7 @@ public class GripEffect implements Effect
   {
     // We just need to check to see if there is a targetable entity
     LivingEntity entity = EntityUtil.getLookedAtEntity(player, max_distance, 1);
-if(entity == null) return false;
+    if(entity == null) return false;
     
     Vector e_dir = player.getLocation().getDirection();
     double x_y_dist = Math.sqrt(Math.pow(e_dir.getX(), 2) + Math.pow(e_dir.getZ(), 2));
@@ -108,6 +118,13 @@ if(entity == null) return false;
     
     // Tests to ensure you can actually go there.
     if(step_h_loc.getBlock().getType().isSolid()) return false;
+    boolean has_bottom = false;
+    for(int i = 0; i < CHECK_BELOW; i++)if(step_h_loc.getBlock().getRelative(BlockFace.DOWN, i).isEmpty())
+    {
+      has_bottom = true;
+      break;
+    }
+    if(!has_bottom) return false;
     return true;
   }
 }

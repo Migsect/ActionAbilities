@@ -16,11 +16,15 @@ import net.samongi.ActionAbilities.Cost.Types.LevelCost;
 import net.samongi.ActionAbilities.Cost.Types.LifeCost;
 import net.samongi.ActionAbilities.Effect.EffectManager;
 import net.samongi.ActionAbilities.Effect.types.DanceEffect;
+import net.samongi.ActionAbilities.Effect.types.ExplosionEffect;
 import net.samongi.ActionAbilities.Effect.types.GripEffect;
 import net.samongi.ActionAbilities.Effect.types.LeapEffect;
+import net.samongi.ActionAbilities.Effect.types.LightningEffect;
 import net.samongi.ActionAbilities.Effect.types.PotionApplyEffect;
 import net.samongi.ActionAbilities.Effect.types.PotionAreaEffect;
 import net.samongi.ActionAbilities.Effect.types.StepEffect;
+import net.samongi.ActionAbilities.Effect.types.SummonEffect;
+import net.samongi.ActionAbilities.Listeners.EntityListener;
 import net.samongi.ActionAbilities.Listeners.PlayerListener;
 import net.samongi.ActionAbilities.Player.PlayerManager;
 import net.samongi.SamongiLib.Configuration.ConfigFile;
@@ -74,6 +78,9 @@ public class ActionAbilities extends JavaPlugin
     this.effect_manager.addEffectConstructor(new LeapEffect.Constructor());
     this.effect_manager.addEffectConstructor(new PotionAreaEffect.Constructor());
     this.effect_manager.addEffectConstructor(new PotionApplyEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new SummonEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new LightningEffect.Constructor());
+    this.effect_manager.addEffectConstructor(new ExplosionEffect.Constructor());
     // registering the effect constructors
     
     // Creating the ability manager
@@ -110,6 +117,7 @@ public class ActionAbilities extends JavaPlugin
     
     PluginManager pm = this.getServer().getPluginManager();
     pm.registerEvents(new PlayerListener(), this);
+    pm.registerEvents(new EntityListener(), this);
     
     // Re-registering players
     for(Player p : Bukkit.getOnlinePlayers()) this.player_manager.register(p.getUniqueId());
