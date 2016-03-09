@@ -116,7 +116,6 @@ public class CooldownTask extends BukkitRunnable
     
     this.player_data.addCharge(this.slot); // data update
     this.player_data.updateCharge(slot); // visual update
-    this.player_data.removeCooldown(slot, this);
     
     CooldownTask.completeSound(this.player_data.getPlayer());
 	}

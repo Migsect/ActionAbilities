@@ -62,6 +62,8 @@ public class DanceEffect implements Effect
     while(entities.size() > 0)
     {
       LivingEntity entity = entities.get((new Random()).nextInt(entities.size()));
+      entities.remove(entity);
+      
       Vector e_dir = entity.getLocation().getDirection().multiply(-1);
       double x_y_dist = Math.sqrt(Math.pow(e_dir.getX(), 2) + Math.pow(e_dir.getZ(), 2));
       
@@ -82,6 +84,7 @@ public class DanceEffect implements Effect
       {
         continue;
       };
+      break;
     }
     if(step_loc == null) return;
     
@@ -105,6 +108,8 @@ public class DanceEffect implements Effect
     while(entities.size() > 0)
     {
       LivingEntity entity = entities.get((new Random()).nextInt(entities.size()));
+      entities.remove(entity);
+      
       Vector e_dir = entity.getLocation().getDirection().multiply(-1);
       double x_y_dist = Math.sqrt(Math.pow(e_dir.getX(), 2) + Math.pow(e_dir.getZ(), 2));
       
@@ -125,6 +130,7 @@ public class DanceEffect implements Effect
       {
         continue;
       };
+      break;
     }
     if(step_loc == null) return false;
     return true;

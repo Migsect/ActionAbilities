@@ -20,6 +20,8 @@ import org.bukkit.potion.PotionEffectType;
 public class PotionAreaEffect implements Effect
 {
   private static final String IDENTIFIER = "POTION_AREA";
+ 
+  private static final int PARTICLES_AMOUNT = 10;
   
   private static final int DEFAULT_STRENGTH = 1;
   private static final int DEFAULT_DURATION = 30;
@@ -71,7 +73,7 @@ public class PotionAreaEffect implements Effect
     
     // We need to get colors for all of these
     Color color = ColorUtil.getPotionColor(type);
-    EffectUtil.displayDustSphereCloud(player.getEyeLocation(), color.getRed(), color.getGreen(), color.getBlue(), (int) Math.ceil(200 * radius * radius), radius);
+    EffectUtil.displayDustSphereCloud(player.getEyeLocation(), color.getRed(), color.getGreen(), color.getBlue(), (int) Math.ceil(PARTICLES_AMOUNT * radius * radius), radius);
     
     Sound sound = Sound.valueOf(this.sound);
     if(sound != null) player.getWorld().playSound(player.getLocation(), sound, 1.0F, 1.0F);

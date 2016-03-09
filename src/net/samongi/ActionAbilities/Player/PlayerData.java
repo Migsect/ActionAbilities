@@ -104,10 +104,15 @@ public class PlayerData
 	  if(item == null) return;
 	  
 	  AbilityInstance ability_instance = AbilityInstance.parseItemStack(item);
+	  // If there is no ability in the item slot
 	  if(ability_instance == null) this.charges[slot] = -1; 
-	  else if(this.tasks.get(slot).size() == 0 && this.charges[slot] < 0) this.charges[slot] = ability_instance.getCharges();
-	  // Placing a maximum on the number of charges that can be displayed
-    if(ability_instance != null && this.charges[slot] > ability_instance.getCharges()) this.charges[slot] = ability_instance.getCharges();
+	  else 
+	  {
+	    if(this.tasks.get(slot).size() == 0) this.charges[slot] = ability_instance.getCharges();
+	  
+  	  // Placing a maximum on the number of charges that can be displayed
+  	  if(this.charges[slot] > ability_instance.getCharges()) this.charges[slot] = ability_instance.getCharges();
+	  }
 
     if(this.charges[slot] > 0) item.setAmount(this.charges[slot]);
 	}
@@ -175,9 +180,21 @@ public class PlayerData
 	 */
 	public void clear()
 	{
-	  for(List<CooldownTask> cool_downs : this.tasks) for(CooldownTask task : cool_downs) task.run();
+	  this.clearCooldowns();
 	  this.reloadCharges();
 	}
+	
+	private void clearCooldowns()
+	{
+	  for(List<CooldownTask> cool_downs : this.tasks) for(CooldownTask task : cool_downs) task.run();
+	  this.clearTasks();
+	}
+	
+	private void clearTasks()
+	{
+	  for(int i = 0; i < SLOTS; i++) tasks.add(new ArrayList<CooldownTask>());
+	}
+	
 	
 	/**Checks to see if the slot is locked
 	 * A slot is locked if it has any active cooldowns

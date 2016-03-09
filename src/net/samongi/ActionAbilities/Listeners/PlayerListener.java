@@ -8,6 +8,7 @@ import net.samongi.ActionAbilities.Player.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -120,7 +121,11 @@ public class PlayerListener implements Listener
     
     // Canceling the event if it is locked
     if(data.isLocked(slot)) event.setCancelled(true);
-    
-		
 	}
+  @EventHandler
+  public void onPlayerDeath(PlayerDeathEvent event)
+  {
+    PlayerData data = ActionAbilities.instance().getPlayerManager().getPlayer(event.getEntity().getUniqueId());
+    data.clear();
+  }
 }
